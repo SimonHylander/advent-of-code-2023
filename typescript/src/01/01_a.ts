@@ -1,10 +1,10 @@
+import assert from "assert";
+
 async function run() {
   const input = await Bun.file(new URL(`${import.meta.url}/../input.txt`)).text();
   const lines = input.split("\n");
 
-  const calibrationNumbers: string[] = []
-
-  for (const line of lines) {
+  const sum = lines.map((line) => {
     let firstFound = false;
     let first = "";
     let lastDigitInString: string | undefined;
@@ -19,21 +19,20 @@ async function run() {
       if (firstFound && isNaN(+line[i])) {
         continue;
       }
-      
+
       if (!isNaN(+line[i])) {
         lastDigitInString = line[i];
       }
     }
 
     if (!lastDigitInString) {
-      calibrationNumbers.push(first + first);
-    } else {
-      calibrationNumbers.push(first + lastDigitInString);
+      return +(first + first);
     }
-  }
 
-  const result = calibrationNumbers.map(Number).reduce((a, b) => a+b, 0);
-  console.log(result)
+    return +(first + lastDigitInString);
+  }).reduce((a, b) => a + b, 0);
+
+  assert(sum === 54304);
 }
 
 run();

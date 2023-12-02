@@ -1,3 +1,5 @@
+import assert from "assert";
+
 const letters = new Map([
   ["one", 1],
   ["two", 2],
@@ -25,9 +27,8 @@ const numberLetter = [
 async function run() {
   const input = await Bun.file(new URL(`${import.meta.url}/../input.txt`)).text();
   const lines = input.split("\n");
-  const calibrationNumbers: string[] = []
 
-  for (let line of lines) {
+  const sum = lines.map(line => {
     const first = getFirst(line)
     let last = getLast(line)
 
@@ -35,17 +36,14 @@ async function run() {
       last = first
     }
 
-    calibrationNumbers.push(first + last);
-  }
+    return +(first + last)
+  }).reduce((a, b) => a+b, 0);
 
-  const result = calibrationNumbers.map(Number).reduce((a, b) => a+b, 0);
-  console.log(result)
+  assert(sum === 54418)
 }
 
 const getFirst = (line: string) => {
   let first = "";
-  let last = "";
-
   let firstFound = false;
 
   for (let i = 0; i < line.length; i++) {
@@ -55,11 +53,10 @@ const getFirst = (line: string) => {
         firstFound = true;
         break;
       }
-
-      last = line[i]
     }
   }
 
+  // disgusting
   const inLine = [];
   for (let i = 0; i < numberLetter.length; i++) {
     const index = line.indexOf(numberLetter[i])
@@ -74,23 +71,12 @@ const getFirst = (line: string) => {
 
   inLine.sort((a, b) => a.index - b.index)
 
-  const [firstLetter, ...rest] = inLine
-  const lastLetter = rest[rest.length - 1]
+  const [firstLetter] = inLine
 
   if (firstLetter) {
     if (line.indexOf(firstLetter.letter) < line.indexOf(first)) {
       first = firstLetter.number?.toString() || ""
     }
-  }
-
-  if (lastLetter) {
-    if (line.indexOf(lastLetter.letter) > line.indexOf(last)) {
-      last = lastLetter.number?.toString() || ""
-    }
-  }
-
-  if (last.length === 0) {
-    last = first
   }
 
   return first
