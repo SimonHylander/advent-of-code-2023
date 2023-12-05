@@ -1,15 +1,17 @@
+import kotlin.io.path.Path
+
 class Day01 {
+    private fun String.getFirstAndLast() = first().toString() to last().toString()
 
-    fun part1() {
-        val fileContent = Util().readFile("day1")
-        val lines = fileContent.split("\n")
+    fun part1(): Int {
+        val lines = Util().readInput("day01")
 
-        val sum = lines.fold(0) { acc, line ->
-            var first: String? = null
-            var last: String? = null
+        val sum = lines.sumOf { line ->
+            var first: Char? = null
+            var last: Char? = null
 
-            line.split("").forEach { char ->
-                if (char.toIntOrNull() != null) {
+            line.forEach() { char ->
+                if (char.isDigit()) {
                     if (first == null) {
                         first = char
                     } else {
@@ -22,15 +24,16 @@ class Day01 {
                 last = first
             }
 
-            acc + (first + last).toInt()
+            (first?.toString()?.toInt() ?: 0) + (last?.toString()?.toInt() ?: 0)
         }
 
         assert(sum == 54304)
+
+        return sum
     }
 
-    fun part2() {
-        val fileContent = Util().readFile("day1")
-        val lines = fileContent.split("\n")
+    fun part2(): Int {
+        val lines = Util().readInput("day01")
 
         val numberLetters = mapOf(
             "one" to 1,
@@ -43,8 +46,6 @@ class Day01 {
             "eight" to 8,
             "nine" to 9
         )
-
-        fun String.getFirstAndLast () = first().toString() to last().toString()
 
         val sum = lines.fold(0) { acc, line ->
             val parsedLine = buildString {
@@ -68,5 +69,7 @@ class Day01 {
         }
 
         assert(sum == 54418)
+
+        return sum
     }
 }
