@@ -1,40 +1,48 @@
+import assert from "assert";
+
 async function run() {
   const input = await Bun.file(new URL(`${import.meta.url}/../input.txt`)).text();
   const lines = input.split("\n");
 
-  const [time, recordDistance] = lines.map((line) => line.startsWith("Time:") ? [line.split("Time:")[1].trim()] : [line.split("Distance:")[1].trim()]);
-
-  // const mmPerMs = 0
-  // Your toy boat has a starting speed of zero millimeters per millisecond.
-  // For each whole millisecond you spend at the beginning of the race holding down the button,
-  // the boat's speed increases by one millimeter per millisecond.
-
-// determine number of ways you can beat the record
-
+  const [time, recordDistance] = lines.map((line) =>
+    line.startsWith("Time:") ? [line.split("Time:")[1].trim()] : [line.split("Distance:")[1].trim()]
+  );
 
   time.forEach((time, i) => {
-    const races = time.split(" ").map(Number).filter(n => n > 0);
-    hold(races[0], 2)
-    hold(races[0], 3)
+    const races = time
+      .split(" ")
+      .map(Number)
+      .filter((n) => n > 0);
 
-    races.forEach(race => {
-      // console.log(race)
-      // console.log(hold(race, 1))
-    })
-  })
+    const record = recorracesdDistance[i]
+      .split(" ")
+      .map(Number)
+      .filter((n) => n > 0);
+
+    const margin = races.map((race, j) => {
+      const scenarios = [];
+
+      for (let k = 0; k < race; k++) {
+        const distance = hold(race, k);
+        if (distance > record[j]) {
+          scenarios.push(k);
+        }
+      }
+
+      return scenarios.length;
+    });
+
+    const sum = margin.reduce((acc, curr) => acc * curr, 1);
+    console.log(sum);
+    assert(sum === 2449062);
+  });
 
   function hold(duration: number, toHold: number) {
-    const mmPerMs = (toHold * 1)
-    const speed = duration - mmPerMs
+    const mmPerMs = toHold * 1;
+    const speed = duration - mmPerMs;
+    const distance = toHold * speed;
 
-    let distance = 0
-    while (distance < toHold) {
-      distance += speed
-    }
-
-    console.log(distance);
-
-    return distance
+    return distance;
   }
 }
 
