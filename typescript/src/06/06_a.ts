@@ -14,7 +14,7 @@ async function run() {
       .map(Number)
       .filter((n) => n > 0);
 
-    const record = recorracesdDistance[i]
+    const record = recordDistance[i]
       .split(" ")
       .map(Number)
       .filter((n) => n > 0);
