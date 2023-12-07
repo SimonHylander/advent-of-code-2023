@@ -1,46 +1,67 @@
 async function run() {
   const input = await Bun.file(new URL(`${import.meta.url}/../input.txt`)).text();
-  const lines = input.split("\n");
-  const seeds = lines.shift()?.split("seeds: ")[1].split(" ").map(Number)
-  let lowest = 0;
-  console.log(seeds);
+  const lines = input.split("\n\n");
+  const seeds = lines.shift()?.split(": ")[1].split(" ").map(Number)
 
-  const map = {
-  };
+type MapElement = {
+  src: number,
+  dst: number,
+  range: number,
+}
 
-  let isNewCategory = false;
-  let mapIndex = -1;
+function range(line: string) {
+  const [src, dst, range] = line.split(" ")
 
-  lines.forEach((line, i) => {
-    /* if (line.startsWith("seeds:")) {
-      seeds = line.split("seeds: ")[1].split(" ").map(Number);
-      return;
-    } */
+  return {
+    src: +src,
+    dst: +dst,
+    range: +range
+  } as MapElement
+}
 
-    if (line === "") {
-      isNewCategory = true;
-      mapIndex = -1;
-      return;
-    }
+function parse(line: string) {
+  const filtered = line.split("\n").filter(n => n)
+  const [src, _, dst] = filtered.shift()?.split(" ")[0].split("-") || []
+  
+  return {
+    src,
+    dst,
+    elements: filtered.map(range)
+  }
+}
 
-    if (isNewCategory) {
-    }
+const data = lines.map(line => parse(line))
+const map = data.reduce((acc, item) => {
+  acc[item.src] = item
+  return acc
+}, {})
 
-    if (line.includes(" map:")) {
-      console.log(line.split(" map:"))
-      const [src, dst] = line.split(" map:")[0].split("-to-")
-      map[src] = {
-        src,
-        dst,
-      };
-      mapIndex = i;
-    } else {
-      const [dst, src, length] = line.split(" ").map(Number);
-      // map[lines[mapIndex]].push([dst, src, length]);
-    }
-  });
+// console.log(map);
 
-console.log(map)
+function findNode(seedNumber: number, name: string, map: { [key: string]: { src: number, dst: number, elements: MapElement[]  } }) {
+  if (map[name] === undefined) {
+    return seedNumber
+  }
+
+  const item = map[name]
+
+  const range = item.elements.find(n => n.src <= seedNumber && seedNumber <= (n.src + n.range))
+  
+  if (range) {
+    const next = range.dst + (seedNumber - range.src)
+    return findNode(next, item.dst, map)
+  }
+
+  return findNode(seedNumber, item.dst, map)
+}
+
+let sum = 0
+seeds?.forEach(seed => {
+  const location = findNode(seed, "seed", map)
+  console.log(seed, location);
+  
+})
+
 return
 
   const oga = new Map<string, number[]>();
