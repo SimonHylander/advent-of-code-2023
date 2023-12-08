@@ -6,12 +6,11 @@ async function run() {
   ).text();
 
   const lines = [...input.split("\n")];
-  let directions = input.split("\n").shift()?.split("") as string[];
-  console.log(lines);
+  let directions = lines.shift()?.split("") as string[];
 
   const network = lines.slice(1, lines.length).map((line, i) => {
-    console.log(line);
-    /* const [element, instructions] = line.split(" = ");
+    const [element, instructions] = line.split(" = ");
+
     const next = instructions
       .substring(instructions.indexOf("(") + 1, instructions.lastIndexOf(")"))
       .trim()
@@ -20,43 +19,47 @@ async function run() {
     return {
       element,
       next,
-    }; */
-
-    return 0;
+    };
   });
-
-  return;
-
-  // let directions = resetDirections();
-
-  // console.log(rl.length);
-  // console.log(network);
 
   let currentNode = network[0];
   let steps = 0;
+  let directionIndex = 0
+
+  console.log(directions.length - 1)
 
   while (currentNode.element !== "ZZZ") {
-    // console.log(directions);
-    console.log(directions.length);
+    if (directionIndex === directions.length - 1) {
+      directionIndex = 0
+    }
 
-    if (directions.length === 0) {
-      console.log(resetDirections());
-      // directions = resetDirections();
-      break;
+    // console.log(directions.length);
+    /* if (directions.length === 0) {
+      // console.log(resetDirections());
+      directions = resetDirections();
+      // break;
     }
 
     if (!directions) {
       // console.log(currentNode);
       // break
+      continue
     }
 
-    const direction = directions.shift();
+    const direction = directions.shift(); */
     // console.log(direction);
+
+    const direction = directions[directionIndex]
+    console.log(steps, direction);
+
+    if (steps > 6) {
+      break
+    }
 
     if (direction === "L") {
       const [left, right] = currentNode.next;
       if (left === "ZZZ") {
-        console.log(left);
+        // console.log(left);
       }
 
       const next = network.find((n) => n.element === left);
