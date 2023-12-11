@@ -43,20 +43,25 @@ async function run() {
       // console.log(currentNode)
       if (directionIndex === directions.length) {
         directionIndex = 0;
+        // break
       }
 
       const direction = directions[directionIndex];
       const nextNode = next(currentNode, network, direction);
 
       if (nextNode) {
-        currentNode = nextNode;
+        if (nextNode.element.endsWith("Z")) {
+          console.log(nextNode)
+        }
 
+        currentNode = nextNode;
         directionIndex++;
         steps++;
       }
     }
 
     arr.push(steps);
+    break
   }
 
   console.log(arr);
